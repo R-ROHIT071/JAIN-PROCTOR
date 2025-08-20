@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JGI Proctor - Online Examination Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #fca311;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --background: #f0f2f5;
+            --text: #333333;
+            --border: #dee2e6;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+        }
+
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            padding: 2rem 0;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 2rem;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+        }
+
+        .user-profile {
+            text-align: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 0.8rem;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text);
+            text-decoration: none;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* Exam Content Styles */
+        .exam-content {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .exam-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .exam-title h2 {
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+
+        .exam-timer {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Questions Navigation */
+        .questions-nav {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .question-number {
+            background-color: var(--light);
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .question-number:hover {
+            background-color: var(--info);
+            color: white;
+        }
+
+        .question-number.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .question-number.answered {
+            background-color: var(--success);
+            color: white;
+        }
+
+        /* Question Content */
+        .question-content {
+            margin-bottom: 2rem;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .option {
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.1);
+        }
+
+        /* Proctoring Panel */
+        .proctoring-panel {
+            background-color: var(--light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        .proctoring-status {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .status-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .status-icon.active {
+            background-color: var(--success);
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        .status-icon.inactive {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .status-icon.warning {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        /* Violation Alert */
+        .violation-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: white;
+            border-left: 5px solid var(--danger);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.5s ease;
+            max-width: 400px;
+        }
+
+        .alert-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+            color: var(--danger);
+        }
+
+        .alert-body {
+            margin-bottom: 1rem;
+        }
+
+        .alert-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #d81159;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #3a86ff;
+        }
+
+        /* Navigation Buttons */
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .questions-nav {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            nav ul {
+                gap: 1rem;
+            }
+            
+            .questions-nav {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .proctoring-status {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .exam-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .questions-nav {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .navigation-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .navigation-buttons .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h1>JGI Proctor</h1>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="active">Dashboard</a></li>
+                        <li><a href="#">Exams</a></li>
+                        <li><a href="#">Results</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">Logout</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="dashboard">
+                <!-- Sidebar -->
+                <aside class="sidebar">
+                    <div class="user-profile">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3>John Doe</h3>
+                        <p>REG123456</p>
+                        <p>Computer Science</p>
+                    </div>
+                    <ul class="sidebar-menu">
+                        <li><a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+                        <li><a href="#"><i class="fas fa-book"></i> My Exams</a></li>
+                        <li><a href="#"><i class="fas fa-chart-bar"></i> Results</a></li>
+                        <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                        <li><a href="#"><i class="fas fa-question-circle"></i> Help & Support</a></li>
+                    </ul>
+                </aside>
+
+                <!-- Exam Content -->
+                <div class="exam-content">
+                    <div class="exam-header">
+                        <div class="exam-title">
+                            <h2>Web Development Fundamentals - Final Exam</h2>
+                            <p>Duration: 60 minutes | Questions: 20 | Total Marks: 100</p>
+                        </div>
+                        <div class="exam-timer">
+                            <i class="fas fa-clock"></i>
+                            <span id="timer">59:45</span>
+                        </div>
+                    </div>
+
+                    <!-- Questions Navigation -->
+                    <div class="questions-nav">
+                        <div class="question-number active">1</div>
+                        <div class="question-number">2</div>
+                        <div class="question-number answered">3</div>
+                        <div class="question-number">4</div>
+                        <div class="question-number">5</div>
+                        <div class="question-number">6</div>
+                        <div class="question-number">7</div>
+                        <div class="question-number answered">8</div>
+                        <div class="question-number">9</div>
+                        <div class="question-number">10</div>
+                    </div>
+
+                    <!-- Question Content -->
+                    <div class="question-content">
+                        <div class="question-text">
+                            <p>1. Which of the following is not a JavaScript data type?</p>
+                        </div>
+                        <div class="options">
+                            <div class="option">Boolean</div>
+                            <div class="option selected">Float</div>
+                            <div class="option">String</div>
+                            <div class="option">Undefined</div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="navigation-buttons">
+                        <button class="btn btn-primary"><i class="fas fa-arrow-left"></i> Previous</button>
+                        <button class="btn btn-success">Next <i class="fas fa-arrow-right"></i></button>
+                    </div>
+
+                    <!-- Proctoring Panel -->
+                    <div class="proctoring-panel">
+                        <div class="panel-title">
+                            <i class="fas fa-shield-alt"></i>
+                            <h3>Proctoring Status</h3>
+                        </div>
+                        <div class="proctoring-status">
+                            <div class="status-item">
+                                <div class="status-icon active">
+                                    <i class="fas fa-video"></i>
+                                </div>
+                                <span>Video Monitoring</span>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-icon active">
+                                    <i class="fas fa-microphone"></i>
+                                </div>
+                                <span>Audio Monitoring</span>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-icon">
+                                    <i class="fas fa-desktop"></i>
+                                </div>
+                                <span>Screen Recording</span>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-icon warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <span>Violations: 1</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Violation Alert -->
+    <div class="violation-alert" id="violationAlert">
+        <div class="alert-header">
+            <i class="fas fa-exclamation-circle"></i>
+            <h3>Proctoring Violation Detected</h3>
+        </div>
+        <div class="alert-body">
+            <p>Multiple faces detected in the camera frame. This is a violation of exam rules.</p>
+            <p><strong>Violation #1:</strong> Multiple faces detected</p>
+        </div>
+        <div class="alert-footer">
+            <button class="btn btn-danger" onclick="dismissAlert()">Dismiss</button>
+        </div>
+    </div>
+
+    <script>
+        // Timer functionality
+        function startTimer(duration, display) {
+            let timer = duration, minutes, seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    timer = duration;
+                }
+                
+                // Change color when less than 5 minutes remain
+                if (timer < 300) {
+                    display.parentElement.style.background = "linear-gradient(135deg, #f72585, #b5179e)";
+                }
+            }, 1000);
+        }
+
+        // Initialize timer
+        window.onload = function () {
+            const sixtyMinutes = 60 * 60;
+            const display = document.querySelector('#timer');
+            startTimer(sixtyMinutes, display);
+            
+            // Show violation alert after 10 seconds
+            setTimeout(showViolationAlert, 10000);
+        };
+
+        // Option selection
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+
+        // Question navigation
+        document.querySelectorAll('.question-number').forEach(number => {
+            number.addEventListener('click', function() {
+                document.querySelectorAll('.question-number').forEach(n => {
+                    n.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Update question text (in a real app, this would fetch the question data)
+                document.querySelector('.question-text p').textContent = 
+                    `${this.textContent}. What is the output of the following code?`;
+            });
+        });
+
+        // Violation alert functions
+        function showViolationAlert() {
+            document.getElementById('violationAlert').style.display = 'block';
+        }
+
+        function dismissAlert() {
+            document.getElementById('violationAlert').style.display = 'none';
+        }
+
+        // Simulate tab switch detection
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                showViolationAlert();
+                document.querySelector('.proctoring-status .status-item:nth-child(4) .status-icon')
+                    .classList.add('warning');
+            }
+        });
+    </script>
+</body>
+</html>
